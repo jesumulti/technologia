@@ -4,54 +4,34 @@ import type { AppProps } from 'next/app';
 import Cookies from 'js-cookie';
 import Header from '../components/Header';
 
-function MyApp({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
-
   const [orgId, setOrgId] = useState<string | null>(null);
 
+  // Handler for organization change
   const handleOrgChange = (newOrgId: string) => {
     setOrgId(newOrgId);
-    Cookies.set('orgId', newOrgId, { secure: true, sameSite: 'Strict', expires: 7 }); // Expires in 7 days
+    document.cookie = `orgId=${newOrgId}; path=/; Secure; SameSite=Strict; max-age=${7 * 24 * 60 * 60}`; // Expires in 7 days
   };
 
   useEffect(() => {
-    const token = Cookies.get('token');
-
-    const publicRoutes = ['/login'];
-    const path = router.pathname;
-
-    const handleAuth = () => {
-      if (!token && !publicRoutes.includes(path)) {
-        router.push('/login');
-      } else if (token && publicRoutes.includes(path)) {
-        router.push('/dashboard');
-      } else if (path === '/login' && token) {
-        router.push('/dashboard');
-      }
-    };
-
-    handleAuth();
-
-    // Also save token in localStorage for easier access in some cases
-    if (token) {
-      localStorage.setItem('token', token);
-    } else {
-      localStorage.removeItem('token');
-    }
-
-    // Set initial orgId from cookie
-    const initialOrgId = Cookies.get('orgId');
-    if (initialOrgId) {
-      setOrgId(initialOrgId);
+    // Get the token from localStorage
+    const token = localStorage.getItem('token');
+    // If no token and not on login page, redirect to login
+    if (!token && router.pathname !== '/login') {
+      router.push('/login');
     }
   }, [router]);
 
   return (
     <>
-      <Header selectedOrg={orgId} onOrgChange={handleOrgChange} />
+      {/* Render the header with selectedOrg and onOrgChange props if not on the login page */}
+      {router.pathname !== '/login' && (
+        <Header selectedOrg={orgId} onOrgChange={handleOrgChange} />
+      )}
       <Component {...pageProps} />
     </>
   );
 }
 
-export default MyApp;
+export default App;
