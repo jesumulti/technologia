@@ -1,0 +1,16 @@
+{
+  "name": "ai-assistant",
+  "version": "1.0.0",
+  "description": "AI Assistant Monorepo",
+  "private": true,
+  "workspaces": [
+    "client",
+    "api",
+    "admin-portal"
+  ],
+  "scripts": {
+    "build": "echo 'Building all packages...'",
+    "start": "echo 'Starting all packages...'"
+  },
+  "devDependencies": {}
+}

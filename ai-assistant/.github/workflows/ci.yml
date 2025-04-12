@@ -1,0 +1,79 @@
+# GitHub Actions workflow for CI/CD
+
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      # Install dependencies for the API
+      - name: Install API dependencies
+        run: |
+          cd ai-assistant/api
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Run API tests
+      - name: Run API tests
+        run: |
+          cd ai-assistant/api
+          pytest
+
+      # Set up Node.js for client and admin-portal
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      # Install client dependencies
+      - name: Install client dependencies
+        run: |
+          cd ai-assistant/client
+          npm install
+
+      # Run client tests
+      - name: Run client tests
+        run: |
+          cd ai-assistant/client
+          npm run test
+
+      # Install admin-portal dependencies
+      - name: Install admin-portal dependencies
+        run: |
+          cd ai-assistant/admin-portal
+          npm install
+
+      # Run admin-portal tests
+      - name: Run admin-portal tests
+        run: |
+          cd ai-assistant/admin-portal
+          npm run test
+
+      # Build Docker containers if all tests pass
+      - name: Build Docker containers
+        if: success()
+        run: |
+          echo "Building Docker containers..."
+          cd ai-assistant/api
+          docker build -t ai-assistant-api .
+          cd ../../
+          docker build -t ai-assistant-client -f ai-assistant/client/Dockerfile .

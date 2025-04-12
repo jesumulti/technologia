@@ -1,0 +1,33 @@
+{
+  "name": "admin-portal",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest"
+ },
+ "devDependencies": {
+  "@types/node": "latest",
+  "@types/react": "latest",
+  "@types/react-dom": "latest",
+  "typescript": "latest",
+  "jest": "^29.7.0",
+  "@types/jest": "^29.5.12",
+  "ts-jest": "^29.1.2"
+ },
+ "jest": {
+  "preset": "ts-jest",
+  "testEnvironment": "jsdom",
+  "setupFilesAfterEnv": ["<rootDir>/jest.setup.js"],
+  "moduleNameMapper": {
+   "\\.(css|less|scss|sass)$": "identity-obj-proxy"
+  }
+ }
+}
